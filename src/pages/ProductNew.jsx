@@ -1,28 +1,54 @@
 import { useNavigate } from "react-router-dom";
+import {useState} from "react";
 
 export default function ProductNew() {
+  const [newProduct, setNewProduct] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(e) {
+  e.preventDefault();
+  setIsLoading(true);
 
-    const formData = new FormData(e.currentTarget);
+  const formData = new FormData(e.currentTarget);
 
-    const newProduct = {
-      title: formData.get("title"),
-      price: Number(formData.get("price")),
-      categoryId: Number(formData.get("categoryId")),
-      image: formData.get("image"),
-      description: formData.get("description"),
-    };
+  const productData = {
+    title: formData.get("title"),
+    price: Number(formData.get("price")),
+    categoryId: Number(formData.get("categoryId")),
+    description: formData.get("description"),
+    images: [formData.get("image")],
+  };
 
-    console.log("New product:", newProduct);
+  console.log("New product:", productData);
 
-    // Later: POST to API
-    alert("Product submitted (mock)");
+  try {
+    const response = await fetch("https://api.escuelajs.co/api/v1/products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(productData),
+    });
 
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("API Error:", errorData);
+      throw new Error(`Failed to create product: ${response.status}`);
+    }
+
+    const createdProduct = await response.json();
+    console.log("Product created successfully:", createdProduct);
+    
+    alert("Product created successfully!");
     navigate("/products");
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Failed to create product. Please try again.");
+  } finally {
+    setIsLoading(false);
   }
+}
 
   return (
     <div className="max-w-xl space-y-6">
