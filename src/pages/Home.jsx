@@ -57,36 +57,24 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="space-y-3 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:gap-3">
             {featured.map((p) => (
               <Link
                 key={p.id}
                 to={`/products/${p.id}`}
-                className="block rounded-2xl border bg-white p-4 hover:shadow-sm transition"
+                className="block rounded-2xl border bg-white p-3 hover:shadow-sm transition"
               >
-                <div className="flex gap-3">
-                  <img
-                    src={p.images?.[0] ?? "https://placehold.co/600x400"}
-                    alt={p.title}
-                    className="h-20 w-20 shrink-0 rounded-xl object-cover"
-                    loading="lazy"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="truncate font-medium">{p.title}</div>
-                        <div className="truncate text-xs text-slate-600">
-                          {p.category?.name}
-                        </div>
-                      </div>
-                      <div className="shrink-0 font-semibold">${p.price}</div>
-                    </div>
-
-                    <p className="mt-2 line-clamp-2 text-sm text-slate-600">
-                      {p.description}
-                    </p>
-                  </div>
+                <img
+                  src={p.images?.[0] ?? "https://placehold.co/600x400"}
+                  alt={p.title}
+                  className="h-20 w-full rounded-lg object-cover mb-2"
+                  loading="lazy"
+                />
+                <div className="truncate font-medium text-sm">{p.title}</div>
+                <div className="truncate text-xs text-slate-600">
+                  {p.category?.name}
                 </div>
+                <div className="mt-1 font-semibold text-sm">${p.price}</div>
               </Link>
             ))}
           </div>
