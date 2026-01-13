@@ -5,7 +5,7 @@ export default function Home() {
   const items = products;
 
   // Featured: first 4 items (simple + predictable for practice)
-  const featured = items.slice(0, 4);
+  const featured = items.slice(0, 3);
 
   // Categories: unique by category.id
   const categories = Array.from(
@@ -57,35 +57,36 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="space-y-3 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             {featured.map((p) => (
               <Link
                 key={p.id}
                 to={`/products/${p.id}`}
-                className="block rounded-2xl border bg-white p-4 hover:shadow-sm transition"
+                className="overflow-hidden rounded-2xl border bg-white hover:shadow-sm transition"
               >
-                <div className="flex gap-3">
-                  <img
-                    src={p.images?.[0] ?? "https://placehold.co/600x400"}
-                    alt={p.title}
-                    className="h-20 w-20 shrink-0 rounded-xl object-cover"
-                    loading="lazy"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="truncate font-medium">{p.title}</div>
-                        <div className="truncate text-xs text-slate-600">
-                          {p.category?.name}
-                        </div>
-                      </div>
-                      <div className="shrink-0 font-semibold">${p.price}</div>
-                    </div>
+                {/* Image */}
+                <img
+                  src={p.images?.[0] ?? "https://placehold.co/600x400"}
+                  alt={p.title}
+                  className="h-40 w-full object-cover mx-auto rounded-xl "
+                  loading="lazy"
+                />
 
-                    <p className="mt-2 line-clamp-2 text-sm text-slate-600">
-                      {p.description}
-                    </p>
+                {/* Content */}
+                <div className="p-4 space-y-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <h3 className="truncate font-medium">{p.title}</h3>
+                      <p className="truncate text-xs text-slate-600">
+                        {p.category?.name}
+                      </p>
+                    </div>
+                    <span className="shrink-0 font-semibold">${p.price}</span>
                   </div>
+
+                  <p className="line-clamp-2 text-sm text-slate-600">
+                    {p.description}
+                  </p>
                 </div>
               </Link>
             ))}
@@ -96,20 +97,20 @@ export default function Home() {
         <section className="space-y-3">
           <h2 className="text-lg font-semibold">Categories</h2>
 
-          <div className="space-y-3">
+          <div className="grid grid-cols-4 gap-4">
             {categories.map((c) => (
               <Link
                 key={c.id}
                 to="/products"
-                className="flex items-center gap-3 rounded-2xl border bg-white p-4 hover:bg-slate-50 transition"
+                className="flex flex-col items-center text-center rounded-2xl border bg-white p-4 hover:bg-slate-50 transition"
               >
                 <img
                   src={c.image}
                   alt={c.name}
-                  className="h-12 w-12 rounded-xl object-cover"
+                  className="h-16 w-16 rounded-xl object-cover"
                   loading="lazy"
                 />
-                <div className="min-w-0">
+                <div className="mt-2">
                   <div className="truncate font-medium">{c.name}</div>
                   <div className="text-xs text-slate-600">Tap to browse</div>
                 </div>
@@ -119,38 +120,43 @@ export default function Home() {
         </section>
 
         {/* Latest Products */}
-        <section className="space-y-3">
+        <section className="space-y-6 px-4 md:px-8 lg:px-12">
           <div className="flex items-end justify-between">
-            <h2 className="text-lg font-semibold">Latest products</h2>
+            <h2 className="text-lg font-semibold">Products</h2>
             <Link to="/products" className="text-sm text-slate-700 underline">
               View all
             </Link>
           </div>
 
-          <div className="space-y-3">
-            {latest.map((p) => (
+          <div className="space-y-4 md:grid md:grid-cols-3 md:gap-6 md:space-y-0">
+            {products.map((p) => (
               <Link
                 key={p.id}
                 to={`/products/${p.id}`}
-                className="block rounded-2xl border bg-white p-4 hover:shadow-sm transition"
+                className="block rounded-2xl border bg-white hover:shadow-lg transition overflow-hidden"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex flex-row md:flex-col gap-4 p-4">
+                  {/* Image */}
                   <img
                     src={p.images?.[0] ?? "https://placehold.co/600x400"}
                     alt={p.title}
-                    className="h-14 w-14 rounded-xl object-cover"
+                    className="
+                  h-24 w-24 rounded-xl object-cover flex-shrink-0
+                  md:h-60 md:w-full md:rounded-t-2xl
+                "
                     loading="lazy"
                   />
+
+                  {/* Content */}
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="truncate font-medium">{p.title}</div>
-                      <div className="shrink-0 text-sm font-semibold">
-                        ${p.price}
-                      </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="truncate font-semibold text-base md:text-lg">
+                        {p.title}
+                      </h3>
+                      <span className="font-semibold">${p.price}</span>
                     </div>
-                    <div className="truncate text-xs text-slate-600">
-                      {p.category?.name}
-                    </div>
+                    <p className="text-sm text-slate-600 truncate mt-1">{p.category?.name}</p>
+                    <p className="text-sm text-slate-600 mt-1 line-clamp-2">{p.description}</p>
                   </div>
                 </div>
               </Link>
