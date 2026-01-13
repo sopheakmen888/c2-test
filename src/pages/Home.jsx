@@ -1,16 +1,35 @@
 import { Link } from "react-router-dom";
 import products from "../assets/data/products.json";
+import { use, useEffect, useState } from "react";
 
 export default function Home() {
+  const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const items = products;
 
   // Featured: first 4 items (simple + predictable for practice)
   const featured = items.slice(0, 4);
 
   // Categories: unique by category.id
-  const categories = Array.from(
-    new Map(items.map((p) => [p.category.id, p.category])).values()
-  );
+  // const categories = Array.from(
+  //   new Map(items.map((p) => [p.category.id, p.category])).values(),
+  // );
+  useEffect(() => {
+    fetch("https://api.escuelajs.co/api/v1/categories?limit=4")
+    .then(res => res.json())
+    .then(data => {
+      setCategories(data);
+      setIsLoading(false);
+  })
+  .catch(err => {
+    console.error("Something went wrong.", err)
+    setIsLoading(false);
+  })
+}, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   // Latest: sort by creationAt desc, take 4
   const latest = [...items]
@@ -57,18 +76,18 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="space-y-3 gap-4">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {featured.map((p) => (
               <Link
                 key={p.id}
                 to={`/products/${p.id}`}
                 className="block rounded-2xl border bg-white p-4 hover:shadow-sm transition"
               >
-                <div className="flex gap-3">
+                <div className="flex flex-col gap-3">
                   <img
                     src={p.images?.[0] ?? "https://placehold.co/600x400"}
                     alt={p.title}
-                    className="h-20 w-20 shrink-0 rounded-xl object-cover"
+                    className="w-full aspect-3/2 rounded-xl object-cover"
                     loading="lazy"
                   />
                   <div className="min-w-0 flex-1">
@@ -81,7 +100,7 @@ export default function Home() {
                       </div>
                       <div className="shrink-0 font-semibold">${p.price}</div>
                     </div>
-
+            
                     <p className="mt-2 line-clamp-2 text-sm text-slate-600">
                       {p.description}
                     </p>
