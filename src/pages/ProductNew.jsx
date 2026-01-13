@@ -1,9 +1,26 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 export default function ProductNew() {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  function handleSubmit(e) {
+  // Fetch categories on component mount
+  useEffect(() => {
+    fetch('https://api.escuelajs.co/api/v1/categories')
+      .then(response => response.json())
+      .then(data => {
+        setCategories(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching categories:', error);
+        setLoading(false);
+      });
+  }, []);
+
+  async function handleSubmit(e) {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
@@ -12,16 +29,29 @@ export default function ProductNew() {
       title: formData.get("title"),
       price: Number(formData.get("price")),
       categoryId: Number(formData.get("categoryId")),
-      image: formData.get("image"),
+      images: [formData.get("image")],
       description: formData.get("description"),
     };
 
-    console.log("New product:", newProduct);
+    try {
+      const response = await fetch('https://api.escuelajs.co/api/v1/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newProduct),
+      });
 
-    // Later: POST to API
-    alert("Product submitted (mock)");
-
-    navigate("/products");
+      if (response.ok) {
+        alert("Successfully saved a new product.");
+        navigate("/products");
+      } else {
+        alert("Saved a new product failed.");
+      }
+    } catch (error) {
+      console.error('Error creating product:', error);
+      alert("Saved a new product failed.");
+    }
   }
 
   return (
@@ -59,19 +89,25 @@ export default function ProductNew() {
           />
         </div>
 
-        {/* Category ID (1–5 only) */}
+        {/* Category */}
         <div>
-          <label className="block text-sm font-medium">Category ID</label>
-          <input
+          <label className="block text-sm font-medium">Category</label>
+          <select
             name="categoryId"
-            type="number"
             required
-            min={1}
-            max={5}
             className="mt-1 w-full rounded-lg border px-3 py-2"
-            placeholder="1 - 5"
-          />
-          <p className="mt-1 text-xs text-slate-500">Allowed values: 1 to 5</p>
+            disabled={loading}
+          >
+            <option value="">Select a category</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+          {loading && (
+            <p className="mt-1 text-xs text-slate-500">Loading categories...</p>
+          )}
         </div>
 
         {/* Image URL */}
